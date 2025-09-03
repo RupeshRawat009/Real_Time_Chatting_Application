@@ -1,0 +1,36 @@
+# Dependency folders
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Testing & coverage
+coverage/
+*.test.js
+*.spec.js
+
+# Temporary files
+*.log
+*.tmp
+
+# Asset cache or uploads (if applicable)
+uploads/
+temp/
