@@ -15,58 +15,61 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (authUser) {
+      setSelectedImg(null); // Clear preview after update
       setName(authUser.fullName || '');
       setBio(authUser.bio || '');
     }
   }, [authUser]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("Submitting profile update...");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitting profile update...");
 
-  if (!authUser) {
-    toast.error("User not authenticated");
-    navigate('/login');
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    let base64Image = null;
-
-    if (selectedImg) {
-      base64Image = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedImg);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject("Failed to read image file");
-      });
-
-      if (!base64Image.startsWith("data:image")) {
-        toast.error("Invalid image format");
-        setLoading(false);
-        return;
-      }
+    if (!authUser) {
+      toast.error("User not authenticated");
+      navigate('/login');
+      return;
     }
 
-    const payload = {
-      fullName: name,
-      bio,
-      ...(base64Image && { profilePic: base64Image }),
-    };
+    setLoading(true);
 
-    const success = await updateProfile(payload);
-    console.log("Update success:", success);
+    try {
+      let base64Image = null;
 
-    if (success) navigate('/');
-  } catch (err) {
-    toast.error(err.message || "Profile update failed");
-    console.error("Submit error:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+      if (selectedImg) {
+        base64Image = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedImg);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject("Failed to read image file");
+        });
+
+        if (!base64Image.startsWith("data:image")) {
+          toast.error("Invalid image format");
+          setLoading(false);
+          return;
+        }
+      }
+
+      const payload = {
+        fullName: name,
+        bio,
+        profilePic: base64Image || authUser?.profilePic || "", // Always include profilePic
+      };
+
+      console.log("Sending payload:", payload);
+
+      const success = await updateProfile(payload);
+      console.log("Update success:", success);
+
+      if (success) navigate('/');
+    } catch (err) {
+      toast.error(err.message || "Profile update failed");
+      console.error("Submit error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className='min-h-screen bg-cover bg-no-repeat flex items-center justify-center'>

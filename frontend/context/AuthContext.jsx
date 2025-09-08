@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socket, setSocket] = useState(null);
 
-  // Check authentication status
   const checkAuth = async () => {
     try {
       const { data } = await axios.get("/api/auth/check");
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login or signup handler
   const login = async (state, credentials) => {
     try {
       const { data } = await axios.post(`/api/auth/${state}`, credentials);
@@ -46,7 +44,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout handler
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -57,11 +54,10 @@ export const AuthProvider = ({ children }) => {
     socket?.disconnect();
   };
 
-  // Profile update handler
   const updateProfile = async (body) => {
     try {
       const { data } = await axios.put("/api/auth/update-profile", body);
-       console.log("Update response:", data);
+      console.log("Update response:", data);
 
       if (data.success) {
         setAuthUser(data.user);
@@ -75,7 +71,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Socket connection handler
   const connectSocket = (userData) => {
     if (!userData || socket?.connected) return;
 
@@ -91,7 +86,6 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // Initial auth check
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["token"] = token;

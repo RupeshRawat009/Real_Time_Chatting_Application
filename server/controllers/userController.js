@@ -87,16 +87,21 @@ export const updateProfile = async (req, res) => {
     const isBase64Image = profilePic?.startsWith("data:image");
 
     if (!profilePic || !isBase64Image) {
+      // No image or invalid format — update text fields only
       updatedUser = await User.findByIdAndUpdate(
         userId,
         { bio, fullName },
         { new: true }
       );
     } else {
+      // Upload image to Cloudinary
       const upload = await cloudinary.uploader.upload(profilePic, {
         folder: "profile_pics",
         resource_type: "image",
       });
+
+      // Log Cloudinary response for debugging
+      console.log("Cloudinary upload result:", upload);
 
       updatedUser = await User.findByIdAndUpdate(
         userId,
